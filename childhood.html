@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Little Malu, Big Memories 🥹</title>
+    <meta name="description" content="A scrapbook of Malu's childhood memories and adorable moments." />
+    <link rel="stylesheet" href="css/style.css?v=20261121-section-titles" />
+    <script src="js/script.js" defer></script>
+  </head>
+  <body class="page-childhood">
+    <div class="stitch-background" aria-hidden="true">
+      <video
+        class="stitch-video"
+        src="media/characters/stitch-hoverboard.mp4"
+        autoplay
+        muted
+        loop
+        playsinline
+        preload="auto"
+        poster="media/characters/stitch-hoverboard.svg"
+        aria-hidden="true"
+      >
+        <source src="media/characters/stitch-hoverboard.mp4" type="video/mp4" />
+      </video>
+    </div>
+    <div class="page-shell">
+      <header class="topbar">
+        <div class="container nav-wrap">
+          <a class="brand" href="index.html">Malu ❤️</a>
+          <nav class="nav" aria-label="Main navigation">
+            <a href="index.html" class="nav-link">Welcome</a>
+            <a href="childhood.html" class="nav-link active">Childhood</a>
+            <a href="now.html" class="nav-link">Now</a>
+            <a href="us.html" class="nav-link">Us</a>
+            <a href="birthday.html" class="nav-link">Birthday</a>
+          </nav>
+        </div>
+      </header>
+
+      <main class="container page-main">
+        <section class="page-intro reveal fade-in-up">
+          <p class="eyebrow">A tiny little story</p>
+          <h1>Little Malu, Big Memories 🥹</h1>
+          <p class="subtitle">Before becoming the beautiful girl I know today, there was this adorable little Malu.</p>
+        </section>
+
+        <section class="scrapbook-gallery reveal fade-in-up" aria-label="Childhood memory gallery">
+          <div class="scrapbook-grid">
+            <figure class="scrapbook-photo scrapbook-photo-one lightbox-trigger" data-image="media/childhood/Screenshot%202026-11-11%20215910.png" data-caption="Look at this little cutie! 🥹">
+              <span class="scrapbook-star star-one" aria-hidden="true">✦</span>
+              <span class="scrapbook-heart heart-one" aria-hidden="true">♡</span>
+              <span class="scrapbook-ribbon ribbon-left" aria-hidden="true"></span>
+              <span class="scrapbook-ribbon ribbon-right" aria-hidden="true"></span>
+              <img src="media/childhood/Screenshot%202026-11-11%20215910.png" alt="Childhood portrait of Malu smiling warmly" />
+              <figcaption>Look at this little cutie! 🥹</figcaption>
+            </figure>
+
+            <figure class="scrapbook-photo scrapbook-photo-two lightbox-trigger" data-image="media/childhood/Screenshot%202026-11-11%20220209.png" data-caption="Little Malu was already stealing hearts. ❤️">
+              <span class="scrapbook-star star-two" aria-hidden="true">✦</span>
+              <span class="scrapbook-heart heart-two" aria-hidden="true">♥</span>
+              <span class="scrapbook-ribbon ribbon-left" aria-hidden="true"></span>
+              <span class="scrapbook-ribbon ribbon-right" aria-hidden="true"></span>
+              <img src="media/childhood/Screenshot%202026-11-11%20220209.png" alt="Adorable childhood photo of Malu" />
+              <figcaption>Little Malu was already stealing hearts. ❤️</figcaption>
+            </figure>
+          </div>
+        </section>
+
+        <div class="page-actions reveal fade-in-up">
+          <a class="button primary cinematic-link" href="now.html">AND LOOK AT THE BEAUTIFUL GIRL YOU BECAME →</a>
+        </div>
+      </main>
+    </div>
+
+    <div id="lightbox" class="lightbox" aria-hidden="true">
+      <button class="lightbox-close" type="button" aria-label="Close image viewer">×</button>
+      <img id="lightbox-image" src="" alt="Expanded memory" />
+      <p id="lightbox-caption"></p>
+    </div>
+  </body>
+</html>

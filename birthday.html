@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>A Little Birthday Surprise 🎂</title>
+    <meta name="description" content="A heartfelt birthday surprise for Malu with roses, music, and a love letter." />
+    <link rel="stylesheet" href="css/style.css" />
+    <script src="js/script.js" defer></script>
+  </head>
+  <body class="page-birthday">
+    <div class="stitch-background" aria-hidden="true">
+      <video
+        class="stitch-video"
+        src="media/characters/stitch-hoverboard.mp4"
+        autoplay
+        muted
+        loop
+        playsinline
+        preload="auto"
+        poster="media/characters/stitch-hoverboard.svg"
+        aria-hidden="true"
+      >
+        <source src="media/characters/stitch-hoverboard.mp4" type="video/mp4" />
+      </video>
+    </div>
+    <div class="page-shell birthday-shell">
+      <header class="topbar">
+        <div class="container nav-wrap">
+          <a class="brand" href="index.html">Malu ❤️</a>
+          <nav class="nav" aria-label="Main navigation">
+            <a href="index.html" class="nav-link">Welcome</a>
+            <a href="childhood.html" class="nav-link">Childhood</a>
+            <a href="now.html" class="nav-link">Now</a>
+            <a href="us.html" class="nav-link">Us</a>
+            <a href="birthday.html" class="nav-link active">Birthday</a>
+          </nav>
+        </div>
+      </header>
+
+      <main class="container birthday-page">
+        <section class="page-intro reveal fade-in-up">
+          <p class="eyebrow">A little birthday miracle</p>
+          <h1>A Little Birthday Surprise 🎂</h1>
+        </section>
+
+        <div class="birthday-stage reveal fade-in-up">
+          <div class="gift-box-wrap">
+            <button class="gift-box" type="button" aria-label="Open the birthday gift box">
+              <span class="gift-lid"></span>
+              <span class="gift-body"></span>
+              <span class="gift-ribbon ribbon-left"></span>
+              <span class="gift-ribbon ribbon-right"></span>
+            </button>
+          </div>
+
+          <div class="music-controls" aria-label="Music controls">
+            <button id="music-toggle" class="button secondary" type="button">Play music 🎶</button>
+          </div>
+
+          <audio id="birthday-music" preload="auto" loop aria-label="Background music">
+            <source src="media/music/birthday-soft.wav" type="audio/wav" />
+          </audio>
+        </div>
+
+        <section class="letter-section reveal fade-in-up">
+          <button class="button primary reveal-letter" type="button">Reveal the birthday letter 💌</button>
+
+          <article id="birthday-letter" class="letter-card hidden" aria-live="polite">
+            <p>
+              Happy Birthday, Malu! ❤️🌹<br /><br />
+              Today is all about you, the beautiful person you are, and all the happiness you deserve.<br /><br />
+              I hope this new year of your life brings you endless smiles, unforgettable memories, love, peace, and everything your heart wishes for.<br /><br />
+              Never forget how special you are. Keep smiling, keep shining, and keep being the wonderful person you are.<br /><br />
+              You deserve all the roses in the world, and if I could, I'd give you a garden full of them.<br /><br />
+              Happy Birthday, my girl. You deserve the sweetest things in life. ❤️<br /><br />
+              With lots of love,<br />
+              Your favourite person 💌
+            </p>
+          </article>
+        </section>
+
+        <div class="final-hero reveal fade-in-up">
+          <img
+            src="media/characters/stitch-hoverboard.svg"
+            alt="Blue alien character riding a hoverboard in celebration"
+            class="celebration-alien"
+          />
+        </div>
+      </main>
+    </div>
+
+    <div id="confetti-layer" class="confetti-layer" aria-hidden="true"></div>
+  </body>
+</html>
