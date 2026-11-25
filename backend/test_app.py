@@ -110,6 +110,12 @@ class BirthdayChatApiTests(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json(), {"status": "ok"})
 
+    def test_swagger_documentation_is_enabled(self):
+        response = self.request("GET", "/docs")
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("swagger-ui", response.text)
+
     def test_cors_allows_site_origin_and_rejects_unlisted_origins(self):
         headers = {
             "Origin": "https://bharath3-alt.github.io",

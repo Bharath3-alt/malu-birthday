@@ -62,7 +62,7 @@ class ChatResponse(BaseModel):
     reply: str
 
 
-app = FastAPI(title="Malu Birthday Chat API", docs_url=None, redoc_url=None)
+app = FastAPI(title="Malu Birthday Chat API")
 
 configured_origins = os.getenv(
     "ALLOWED_ORIGINS",
