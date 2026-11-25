@@ -367,7 +367,8 @@
     chatSendButton
   ) {
     const config = window.BIRTHDAY_CHAT_CONFIG || {};
-    const apiBaseUrl = typeof config.apiBaseUrl === "string" ? config.apiBaseUrl.trim().replace(/\/+$/, "") : "";
+    const configuredApiBaseUrl = typeof config.apiBaseUrl === "string" ? config.apiBaseUrl.trim() : "";
+    const apiBaseUrl = (configuredApiBaseUrl || "https://malu-birthday.onrender.com").replace(/\/+$/, "");
     const welcomeMessage =
       "Hi Malu! Happy birthday! I'm your little birthday assistant. Ask me anything—or ask me who made this little corner of the internet. 👀";
     let chatHistory = [{ role: "assistant", content: welcomeMessage }];
