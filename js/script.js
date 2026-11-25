@@ -411,7 +411,7 @@
 
     const getApiUrl = () => {
       if (!apiBaseUrl) {
-        throw new Error("Our birthday assistant is still getting ready. Please try again soon.");
+        throw new Error("The AI chat backend isn't connected yet. Please try again after it's set up.");
       }
 
       let url;
