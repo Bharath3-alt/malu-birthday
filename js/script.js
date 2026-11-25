@@ -128,6 +128,7 @@
   if (siteMusic) {
     const preferenceKeys = {
       playing: "malu-site-music-playing",
+      paused: "malu-site-music-paused",
       muted: "malu-site-music-muted",
       position: "malu-site-music-position",
     };
@@ -177,7 +178,10 @@
 
     const showPlaybackError = (error) => {
       if (siteMusicStatus) {
-        siteMusicStatus.textContent = "Playback could not start. Tap Play to try again.";
+        siteMusicStatus.textContent =
+          error.name === "NotAllowedError"
+            ? "Your browser blocked autoplay. Tap Play to start the music."
+            : "Playback could not start. Tap Play to try again.";
         siteMusicStatus.classList.add("is-visible");
       }
       console.warn("The browser did not allow background music playback.", error);
@@ -187,13 +191,13 @@
       try {
         await siteMusic.play();
         writeLocalPreference(preferenceKeys.playing, "true");
+        writeLocalPreference(preferenceKeys.paused, "false");
         if (siteMusicStatus) {
           siteMusicStatus.textContent = "";
           siteMusicStatus.classList.remove("is-visible");
         }
         syncPlayControl();
       } catch (error) {
-        writeLocalPreference(preferenceKeys.playing, "false");
         syncPlayControl();
         showPlaybackError(error);
       }
@@ -202,6 +206,7 @@
     const pausePlayback = () => {
       siteMusic.pause();
       writeLocalPreference(preferenceKeys.playing, "false");
+      writeLocalPreference(preferenceKeys.paused, "true");
       syncPlayControl();
     };
 
@@ -246,6 +251,7 @@
     if (siteMusicPlayToggle) {
       siteMusicPlayToggle.addEventListener("click", () => {
         if (siteMusic.paused) {
+          writeLocalPreference(preferenceKeys.paused, "false");
           startPlayback();
         } else {
           pausePlayback();
@@ -265,7 +271,7 @@
       setSavedPosition();
       syncPlayControl();
       syncMuteControl();
-      if (readLocalPreference(preferenceKeys.playing) === "true") {
+      if (readLocalPreference(preferenceKeys.paused) !== "true") {
         startPlayback();
       }
     };
