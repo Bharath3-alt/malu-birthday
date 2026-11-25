@@ -14,7 +14,13 @@ malu-birthday-website/
 ├── css/
 │   └── style.css
 ├── js/
-│   └── script.js
+│   ├── script.js
+│   └── chat-config.js
+├── backend/
+│   ├── app.py
+│   ├── requirements.txt
+│   └── test_app.py
+├── render.yaml
 ├── media/
 │   ├── childhood/
 │   ├── now/
@@ -24,6 +30,54 @@ malu-birthday-website/
 │   └── videos/
 └── README.md
 ```
+
+## Birthday AI chat
+
+The final homepage section uses a FastAPI backend and the official OpenAI Python SDK with the Responses API. The browser sends the current conversation to `/api/chat`; the backend adds the assistant instructions and reads `OPENAI_API_KEY` from its server environment. The API key is never included in the website or returned to the browser. The chat is not trained specifically on Malu and does not invent personal memories.
+
+The site remains hosted on GitHub Pages, which cannot run the private API key securely. Deploy the backend separately (the included `render.yaml` is a Render Blueprint), then set its public URL in `js/chat-config.js`.
+
+### Configure and run locally (PowerShell)
+
+1. Copy `backend\.env.example` to `backend\.env` and add your API key to that local file. `.env` files are ignored by Git; never paste the key into `js/chat-config.js` or commit it.
+2. From the project root, install the backend dependencies:
+
+   ```powershell
+   .\.venv\Scripts\python.exe -m pip install -r backend\requirements.txt
+   ```
+
+3. Start the API:
+
+   ```powershell
+   .\.venv\Scripts\python.exe -m uvicorn app:app --app-dir backend --reload --port 8001
+   ```
+
+4. Temporarily set `apiBaseUrl` in `js/chat-config.js` to `http://localhost:8001`, then serve the website in a second terminal:
+
+   ```powershell
+   .\.venv\Scripts\python.exe -m http.server 8000
+   ```
+
+5. Open `http://localhost:8000/`. Send a message and a follow-up to check conversation context. The separate “ONE LAST THING...” button reveals the message configured by `finalRevealMessage` in `js/chat-config.js`.
+
+### Deploy the backend
+
+1. In Render, create a Blueprint from this repository and use the included `render.yaml`.
+2. Set `OPENAI_API_KEY` as a secret environment variable in the Render dashboard. Do not add it to the Blueprint, GitHub, or the frontend.
+3. After the service is healthy at `/health`, copy its HTTPS URL into `apiBaseUrl` in `js/chat-config.js` and push that non-secret URL change to GitHub Pages.
+4. The backend's `ALLOWED_ORIGINS` must contain the website origin (`https://bharath3-alt.github.io`). For local development, include the localhost origin as shown in `backend\.env.example`.
+
+The service uses the configurable `OPENAI_MODEL` setting (default `gpt-4.1-mini`). Monitor API usage and set billing limits in your OpenAI project. The official references are the [OpenAI Python quickstart](https://developers.openai.com/api/docs/quickstart) and [Responses API create reference](https://developers.openai.com/api/reference/resources/responses/methods/create).
+
+The API rejects invalid or oversized conversation history and limits requests to 20 per minute per running service instance.
+
+Run the backend's automated validation tests from the project root:
+
+```powershell
+.\.venv\Scripts\python.exe -m unittest discover -s backend -p "test_*.py"
+```
+
+These tests mock the OpenAI SDK and do not spend API credits. To verify actual model replies, configure a valid local key and send messages through the locally served site.
 
 ## How to add your photos and videos
 

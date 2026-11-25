@@ -8,8 +8,9 @@
       name="description"
       content="A cinematic, romantic birthday experience for Malu with a premium editorial design, storybook moments, and a heartfelt birthday finale."
     />
-    <link rel="stylesheet" href="css/style.css?v=20261124-music-controls" />
-    <script src="js/script.js?v=20261124-autoplay-music" defer></script>
+    <link rel="stylesheet" href="css/style.css?v=20261124-birthday-chat" />
+    <script src="js/chat-config.js?v=20261124-chat" defer></script>
+    <script src="js/script.js?v=20261124-birthday-chat" defer></script>
   </head>
   <body>
     <div id="loader" class="loader" aria-live="polite">
@@ -33,6 +34,7 @@
           <a href="#today">Today</a>
           <a href="#story">Our Story</a>
           <a href="#birthday">Birthday</a>
+          <a href="#final-surprise">Final Chat</a>
         </nav>
         <button class="nav-toggle" type="button" aria-label="Toggle navigation" aria-expanded="false">
           <span></span>
@@ -254,6 +256,65 @@
 
         <div class="final-character reveal" aria-hidden="true">
           <img src="media/characters/stitch-hoverboard.svg" alt="Stitch-inspired blue character celebrating on a hoverboard" />
+        </div>
+      </section>
+
+      <section id="final-surprise" class="story-section section-panel reveal final-chat-section" aria-labelledby="final-chat-title">
+        <div class="final-chat-hearts" aria-hidden="true">
+          <span>♡</span>
+          <span>♥</span>
+          <span>♡</span>
+          <span>♥</span>
+        </div>
+        <div class="final-chat-heading">
+          <p class="eyebrow">THE FINAL SURPRISE ❤️</p>
+          <h2 id="final-chat-title">A Little Chat With Someone Special</h2>
+          <p>Hey Malu! There's someone who has a little something to tell you. Why don't you have a chat? 👀</p>
+        </div>
+
+        <div class="birthday-chat-panel">
+          <div class="birthday-chat-topbar">
+            <div class="chat-assistant-identity">
+              <span class="chat-assistant-avatar" aria-hidden="true">✦</span>
+              <span>
+                <strong>Your birthday assistant</strong>
+                <small>Here for a little chat</small>
+              </span>
+            </div>
+            <button class="chat-clear-button" id="chat-clear" type="button">Clear chat</button>
+          </div>
+
+          <div class="chat-transcript" id="chat-transcript" role="log" aria-live="polite" aria-relevant="additions text">
+            <div class="chat-message chat-message-assistant">
+              <span class="chat-message-avatar" aria-hidden="true">✦</span>
+              <p class="chat-message-bubble">Hi Malu! Happy birthday! I'm your little birthday assistant. Ask me anything—or ask me who made this little corner of the internet. 👀</p>
+            </div>
+          </div>
+          <div class="chat-typing-indicator" id="chat-typing-indicator" aria-label="Assistant is typing" hidden>
+            <span class="chat-message-avatar" aria-hidden="true">✦</span>
+            <span class="chat-typing-bubble" aria-hidden="true"><i></i><i></i><i></i></span>
+          </div>
+
+          <div class="chat-suggestions" aria-label="Suggested questions">
+            <button type="button" class="chat-suggestion">Who made this website? 👀</button>
+            <button type="button" class="chat-suggestion">What is this surprise about?</button>
+            <button type="button" class="chat-suggestion">Tell me something funny!</button>
+            <button type="button" class="chat-suggestion">Does someone have a secret? 😂</button>
+          </div>
+
+          <form class="chat-composer" id="chat-form">
+            <label class="visually-hidden" for="chat-input">Write a message</label>
+            <input id="chat-input" name="message" type="text" maxlength="1500" autocomplete="off" placeholder="Write a message..." required />
+            <button class="chat-send-button" id="chat-send" type="submit" aria-label="Send message">
+              <span aria-hidden="true">➤</span>
+            </button>
+          </form>
+          <p class="chat-error" id="chat-error" role="status" aria-live="polite"></p>
+        </div>
+
+        <div class="chat-final-reveal">
+          <button class="button-primary chat-reveal-button" id="chat-reveal-button" type="button">ONE LAST THING... ❤️</button>
+          <p class="chat-final-message" id="chat-final-message" hidden></p>
         </div>
       </section>
     </main>

@@ -347,4 +347,193 @@
 
     setTimeout(typeText, 500);
   }
+
+  const chatForm = document.getElementById("chat-form");
+  const chatInput = document.getElementById("chat-input");
+  const chatTranscript = document.getElementById("chat-transcript");
+  const chatTypingIndicator = document.getElementById("chat-typing-indicator");
+  const chatError = document.getElementById("chat-error");
+  const chatSendButton = document.getElementById("chat-send");
+  const chatClearButton = document.getElementById("chat-clear");
+  const chatRevealButton = document.getElementById("chat-reveal-button");
+  const chatFinalMessage = document.getElementById("chat-final-message");
+
+  if (
+    chatForm &&
+    chatInput &&
+    chatTranscript &&
+    chatTypingIndicator &&
+    chatError &&
+    chatSendButton
+  ) {
+    const config = window.BIRTHDAY_CHAT_CONFIG || {};
+    const apiBaseUrl = typeof config.apiBaseUrl === "string" ? config.apiBaseUrl.trim().replace(/\/+$/, "") : "";
+    const welcomeMessage =
+      "Hi Malu! Happy birthday! I'm your little birthday assistant. Ask me anything—or ask me who made this little corner of the internet. 👀";
+    let chatHistory = [{ role: "assistant", content: welcomeMessage }];
+    let isSending = false;
+
+    const appendMessage = (role, content) => {
+      const message = document.createElement("div");
+      message.className = `chat-message chat-message-${role}`;
+
+      if (role === "assistant") {
+        const avatar = document.createElement("span");
+        avatar.className = "chat-message-avatar";
+        avatar.setAttribute("aria-hidden", "true");
+        avatar.textContent = "✦";
+        message.appendChild(avatar);
+      }
+
+      const bubble = document.createElement("p");
+      bubble.className = "chat-message-bubble";
+      bubble.textContent = content;
+      message.appendChild(bubble);
+      chatTranscript.appendChild(message);
+      chatTranscript.scrollTo({ top: chatTranscript.scrollHeight, behavior: "smooth" });
+    };
+
+    const updateSendButton = () => {
+      chatSendButton.disabled = isSending || !chatInput.value.trim();
+      chatInput.disabled = isSending;
+      chatForm.setAttribute("aria-busy", String(isSending));
+    };
+
+    const clearError = () => {
+      chatError.textContent = "";
+      chatError.classList.remove("is-visible");
+    };
+
+    const showError = (message) => {
+      chatError.textContent = message;
+      chatError.classList.add("is-visible");
+    };
+
+    const getApiUrl = () => {
+      if (!apiBaseUrl) {
+        throw new Error("Our birthday assistant is still getting ready. Please try again soon.");
+      }
+
+      let url;
+      try {
+        url = new URL(apiBaseUrl);
+      } catch {
+        throw new Error("Our birthday assistant is not available right now. Please try again soon.");
+      }
+
+      const isLocalHttp = url.protocol === "http:" && ["localhost", "127.0.0.1"].includes(url.hostname);
+      if (url.protocol !== "https:" && !isLocalHttp) {
+        throw new Error("Our birthday assistant is not available right now. Please try again soon.");
+      }
+
+      return `${apiBaseUrl}/api/chat`;
+    };
+
+    const sendMessage = async (messageText) => {
+      if (isSending || !messageText) {
+        return;
+      }
+
+      isSending = true;
+      clearError();
+      appendMessage("user", messageText);
+      chatHistory.push({ role: "user", content: messageText });
+      chatInput.value = "";
+      chatTypingIndicator.hidden = false;
+      chatTranscript.scrollTo({ top: chatTranscript.scrollHeight, behavior: "smooth" });
+      updateSendButton();
+
+      const requestMessages = chatHistory.slice(-20);
+      while (
+        requestMessages.length > 1 &&
+        requestMessages.reduce((total, item) => total + item.content.length, 0) > 9500
+      ) {
+        requestMessages.shift();
+      }
+
+      const controller = new AbortController();
+      const timeoutId = window.setTimeout(() => controller.abort(), 45000);
+      try {
+        const response = await fetch(getApiUrl(), {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          credentials: "omit",
+          body: JSON.stringify({ messages: requestMessages }),
+          signal: controller.signal,
+        });
+        const result = await response.json().catch(() => null);
+
+        if (!response.ok) {
+          throw new Error(
+            typeof result?.detail === "string"
+              ? result.detail
+              : "The birthday assistant is taking a little break. Please try again."
+          );
+        }
+
+        if (typeof result?.reply !== "string" || !result.reply.trim()) {
+          throw new Error("The birthday assistant couldn't reply just now. Please try again.");
+        }
+
+        const reply = result.reply.trim();
+        chatHistory.push({ role: "assistant", content: reply });
+        appendMessage("assistant", reply);
+      } catch (error) {
+        chatHistory.pop();
+        const message =
+          error.name === "AbortError"
+            ? "That took a little too long. Please try sending your message again."
+            : error.message || "The birthday assistant is unavailable right now. Please try again soon.";
+        showError(message);
+      } finally {
+        window.clearTimeout(timeoutId);
+        chatTypingIndicator.hidden = true;
+        isSending = false;
+        chatInput.focus();
+        updateSendButton();
+      }
+    };
+
+    chatForm.addEventListener("submit", (event) => {
+      event.preventDefault();
+      sendMessage(chatInput.value.trim());
+    });
+    chatInput.addEventListener("input", updateSendButton);
+
+    document.querySelectorAll(".chat-suggestion").forEach((suggestion) => {
+      suggestion.addEventListener("click", () => {
+        if (!isSending) {
+          sendMessage(suggestion.textContent.trim());
+        }
+      });
+    });
+
+    chatClearButton?.addEventListener("click", () => {
+      if (isSending || !window.confirm("Clear this conversation? This only clears the chat on this page.")) {
+        return;
+      }
+      chatHistory = [{ role: "assistant", content: welcomeMessage }];
+      chatTranscript.replaceChildren();
+      appendMessage("assistant", welcomeMessage);
+      clearError();
+      chatInput.value = "";
+      updateSendButton();
+      chatInput.focus();
+    });
+
+    chatRevealButton?.addEventListener("click", () => {
+      const message =
+        typeof config.finalRevealMessage === "string" ? config.finalRevealMessage.trim() : "";
+      if (!message) {
+        showError("Add your personal reveal message in js/chat-config.js first.");
+        return;
+      }
+      chatFinalMessage.textContent = message;
+      chatFinalMessage.hidden = false;
+      chatRevealButton.hidden = true;
+      chatFinalMessage.scrollIntoView({ behavior: "smooth", block: "center" });
+    });
+
+    updateSendButton();
+  }
 });
