@@ -483,6 +483,8 @@
         const message =
           error.name === "AbortError"
             ? "That took a little too long. Please try sending your message again."
+            : error instanceof TypeError
+              ? "Couldn't reach the birthday assistant. Please check your connection and try again."
             : error.message || "The birthday assistant is unavailable right now. Please try again soon.";
         showError(message);
       } finally {
