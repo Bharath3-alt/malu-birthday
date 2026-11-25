@@ -33,13 +33,13 @@ malu-birthday-website/
 
 ## Birthday AI chat
 
-The final homepage section uses a FastAPI backend and the official OpenAI Python SDK with the Responses API. The browser sends the current conversation to `/api/chat`; the backend adds the assistant instructions and reads `OPENAI_API_KEY` from its server environment. The API key is never included in the website or returned to the browser. The chat is not trained specifically on Malu and does not invent personal memories.
+The final homepage section uses a FastAPI backend and the OpenAI Python SDK configured for Groq's OpenAI-compatible Chat Completions API. The browser sends the current conversation to `/api/chat`; the backend adds the assistant instructions and reads `GROQ_API_KEY` from its server environment. The API key is never included in the website or returned to the browser. The chat is not trained specifically on Malu and does not invent personal memories.
 
 The site remains hosted on GitHub Pages, which cannot run the private API key securely. Deploy the backend separately (the included `render.yaml` is a Render Blueprint), then set its public URL in `js/chat-config.js`.
 
 ### Configure and run locally (PowerShell)
 
-1. Copy `backend\.env.example` to `backend\.env` and add your API key to that local file. `.env` files are ignored by Git; never paste the key into `js/chat-config.js` or commit it.
+1. Copy `backend\.env.example` to `backend\.env` and add your Groq API key to that local file. `.env` files are ignored by Git; never paste the key into `js/chat-config.js` or commit it.
 2. From the project root, install the backend dependencies:
 
    ```powershell
@@ -63,11 +63,11 @@ The site remains hosted on GitHub Pages, which cannot run the private API key se
 ### Deploy the backend
 
 1. In Render, create a Blueprint from this repository and use the included `render.yaml`.
-2. Set `OPENAI_API_KEY` as a secret environment variable in the Render dashboard. Do not add it to the Blueprint, GitHub, or the frontend.
+2. Set `GROQ_API_KEY` as a secret environment variable in the Render dashboard. Do not add it to the Blueprint, GitHub, or the frontend.
 3. After the service is healthy at `/health`, copy its HTTPS URL into `apiBaseUrl` in `js/chat-config.js` and push that non-secret URL change to GitHub Pages.
 4. The backend's `ALLOWED_ORIGINS` must contain the website origin (`https://bharath3-alt.github.io`). For local development, include the localhost origin as shown in `backend\.env.example`.
 
-The service uses the configurable `OPENAI_MODEL` setting (default `gpt-4.1-mini`). Monitor API usage and set billing limits in your OpenAI project. The official references are the [OpenAI Python quickstart](https://developers.openai.com/api/docs/quickstart) and [Responses API create reference](https://developers.openai.com/api/reference/resources/responses/methods/create).
+The service uses the configurable `GROQ_MODEL` setting (default `openai/gpt-oss-20b`), a currently supported Groq model with free-tier availability subject to Groq's rate limits. The existing OpenAI Python SDK targets `https://api.groq.com/openai/v1`; no additional SDK dependency is needed. See Groq's [OpenAI compatibility guide](https://console.groq.com/docs/openai), [supported models](https://console.groq.com/docs/models), and [rate limits](https://console.groq.com/docs/rate-limits).
 
 The API rejects invalid or oversized conversation history and limits requests to 20 per minute per running service instance.
 
@@ -77,7 +77,7 @@ Run the backend's automated validation tests from the project root:
 .\.venv\Scripts\python.exe -m unittest discover -s backend -p "test_*.py"
 ```
 
-These tests mock the OpenAI SDK and do not spend API credits. To verify actual model replies, configure a valid local key and send messages through the locally served site.
+These tests mock the OpenAI SDK and do not spend API credits. To verify actual model replies, configure a valid Groq key and send messages through the locally served site.
 
 ## How to add your photos and videos
 

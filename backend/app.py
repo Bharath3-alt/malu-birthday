@@ -16,6 +16,9 @@ load_dotenv(Path(__file__).with_name(".env"))
 
 logger = logging.getLogger("birthday_chat")
 
+GROQ_API_BASE_URL = "https://api.groq.com/openai/v1"
+DEFAULT_GROQ_MODEL = "openai/gpt-oss-20b"
+
 SYSTEM_INSTRUCTIONS = """You are a friendly, funny, sweet and slightly teasing assistant on Malu's birthday website.
 
 You know that this website was created specially for Malu by someone who cares about making her birthday memorable. Your personality is natural, warm, humorous and conversational.
@@ -102,29 +105,30 @@ def enforce_rate_limit() -> None:
 
 @app.post("/api/chat", response_model=ChatResponse)
 def create_chat_response(request: ChatRequest) -> ChatResponse:
-    api_key = os.getenv("OPENAI_API_KEY")
+    api_key = os.getenv("GROQ_API_KEY")
     if not api_key:
         raise HTTPException(status_code=503, detail="The birthday assistant is not configured yet.")
 
     enforce_rate_limit()
-    model = os.getenv("OPENAI_MODEL", "gpt-4.1-mini").strip() or "gpt-4.1-mini"
+    model = os.getenv("GROQ_MODEL", DEFAULT_GROQ_MODEL).strip() or DEFAULT_GROQ_MODEL
+    messages = [{"role": "system", "content": SYSTEM_INSTRUCTIONS}]
+    messages.extend(message.model_dump() for message in request.messages)
     try:
-        with OpenAI(api_key=api_key, timeout=35.0) as client:
-            response = client.responses.create(
+        with OpenAI(api_key=api_key, base_url=GROQ_API_BASE_URL, timeout=35.0) as client:
+            response = client.chat.completions.create(
                 model=model,
-                instructions=SYSTEM_INSTRUCTIONS,
-                input=[message.model_dump() for message in request.messages],
-                max_output_tokens=350,
-                store=False,
+                messages=messages,
+                max_completion_tokens=350,
             )
     except OpenAIError as error:
-        logger.warning("OpenAI Responses API request failed (%s).", type(error).__name__)
+        logger.warning("Groq chat completion request failed (%s).", type(error).__name__)
         raise HTTPException(
             status_code=502,
             detail="The birthday assistant is taking a little break. Please try again.",
         ) from None
 
-    reply = response.output_text.strip()
+    reply = response.choices[0].message.content
+    reply = reply.strip() if reply else ""
     if not reply:
         raise HTTPException(
             status_code=502,

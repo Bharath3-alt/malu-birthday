@@ -30,20 +30,29 @@ class BirthdayChatApiTests(unittest.TestCase):
     def test_chat_returns_generated_reply_and_forwards_context(self):
         mock_client = MagicMock()
         mock_client.__enter__.return_value = mock_client
-        mock_client.responses.create.return_value.output_text = "Bharath made this website!"
+        mock_client.chat.completions.create.return_value.choices[0].message.content = (
+            "Bharath made this website!"
+        )
 
-        with patch.dict(os.environ, {"OPENAI_API_KEY": "test-key"}), patch(
-            "app.OpenAI", return_value=mock_client
-        ) as openai_client:
+        with patch.dict(
+            os.environ,
+            {"GROQ_API_KEY": "test-key", "GROQ_MODEL": "openai/gpt-oss-20b"},
+        ), patch("app.OpenAI", return_value=mock_client) as openai_client:
             response = self.request("POST", "/api/chat", json={"messages": self.valid_messages})
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json(), {"reply": "Bharath made this website!"})
-        openai_client.assert_called_once_with(api_key="test-key", timeout=35.0)
-        request = mock_client.responses.create.call_args.kwargs
-        self.assertEqual(request["input"], self.valid_messages)
-        self.assertIn("Do not invent personal memories", request["instructions"])
-        self.assertFalse(request["store"])
+        openai_client.assert_called_once_with(
+            api_key="test-key",
+            base_url="https://api.groq.com/openai/v1",
+            timeout=35.0,
+        )
+        request = mock_client.chat.completions.create.call_args.kwargs
+        self.assertEqual(request["model"], "openai/gpt-oss-20b")
+        self.assertEqual(request["messages"][0]["role"], "system")
+        self.assertIn("Do not invent personal memories", request["messages"][0]["content"])
+        self.assertEqual(request["messages"][1:], self.valid_messages)
+        self.assertEqual(request["max_completion_tokens"], 350)
 
     def test_rejects_non_alternating_conversation(self):
         response = self.request(
@@ -71,18 +80,18 @@ class BirthdayChatApiTests(unittest.TestCase):
         self.assertEqual(oversized.status_code, 422)
 
     def test_missing_key_returns_configuration_error(self):
-        with patch.dict(os.environ, {"OPENAI_API_KEY": ""}):
+        with patch.dict(os.environ, {"GROQ_API_KEY": ""}):
             response = self.request("POST", "/api/chat", json={"messages": self.valid_messages})
 
         self.assertEqual(response.status_code, 503)
         self.assertEqual(response.json()["detail"], "The birthday assistant is not configured yet.")
 
-    def test_openai_errors_return_friendly_message_without_provider_details(self):
+    def test_groq_errors_return_friendly_message_without_provider_details(self):
         mock_client = MagicMock()
         mock_client.__enter__.return_value = mock_client
-        mock_client.responses.create.side_effect = OpenAIError("private provider details")
+        mock_client.chat.completions.create.side_effect = OpenAIError("private provider details")
 
-        with patch.dict(os.environ, {"OPENAI_API_KEY": "test-key"}), patch(
+        with patch.dict(os.environ, {"GROQ_API_KEY": "test-key"}), patch(
             "app.OpenAI", return_value=mock_client
         ):
             response = self.request("POST", "/api/chat", json={"messages": self.valid_messages})
@@ -95,7 +104,7 @@ class BirthdayChatApiTests(unittest.TestCase):
         self.assertNotIn("private provider details", response.text)
 
     def test_rate_limit_returns_a_friendly_error(self):
-        with patch.dict(os.environ, {"OPENAI_API_KEY": "test-key"}), patch(
+        with patch.dict(os.environ, {"GROQ_API_KEY": "test-key"}), patch(
             "app.enforce_rate_limit",
             side_effect=HTTPException(status_code=429, detail="Please try again in a minute."),
         ):
