@@ -8,8 +8,8 @@
       name="description"
       content="A cinematic, romantic birthday experience for Malu with a premium editorial design, storybook moments, and a heartfelt birthday finale."
     />
-    <link rel="stylesheet" href="css/style.css?v=20261121-section-titles" />
-    <script src="js/script.js?v=20261109-gallery" defer></script>
+    <link rel="stylesheet" href="css/style.css?v=20261124-autoplay-music" />
+    <script src="js/script.js?v=20261124-autoplay-music" defer></script>
   </head>
   <body>
     <div id="loader" class="loader" aria-live="polite">
@@ -185,6 +185,31 @@
         </div>
       </section>
 
+      <section id="storage-video" class="story-section section-panel storage-video-section reveal" aria-labelledby="storage-video-title">
+        <div class="storage-video-heading">
+          <p class="eyebrow">A LITTLE STORAGE PROBLEM 📱</p>
+          <h2 id="storage-video-title">YOU TOOK ALL MY STORAGE! 😂❤️</h2>
+          <p>
+            My phone is running out of space🤣
+          </p>
+        </div>
+
+        <div class="storage-video-frame">
+          <video class="storage-video-player" controls preload="metadata" playsinline aria-label="A playful video about running out of phone storage">
+            <source src="media/videos/WhatsApp Video 2026-11-24 at 9.21.32 PM.mp4" type="video/mp4" />
+            Your browser does not support HTML video.
+          </video>
+          <div class="storage-status">
+            <span class="storage-status-icon" aria-hidden="true">📱</span>
+            <span class="storage-status-label">PHONE STORAGE</span>
+            <span class="storage-meter" role="progressbar" aria-label="Phone storage nearly full" aria-valuemin="0" aria-valuemax="100" aria-valuenow="96">
+              <span class="storage-meter-fill"></span>
+            </span>
+            <span class="storage-status-value">96% full</span>
+          </div>
+        </div>
+      </section>
+
       <section id="birthday" class="story-section birthday-section section-panel reveal">
         <div class="section-heading center-heading">
           <p class="eyebrow">Section 04</p>
@@ -206,9 +231,8 @@
             <span class="gift-ribbon gift-ribbon-right"></span>
           </button>
 
-          <button class="button-secondary music-toggle" id="music-toggle" type="button">Play music</button>
-          <audio id="birthday-music" loop preload="auto">
-            <source src="media/music/birthday-soft.wav" type="audio/wav" />
+          <audio id="site-background-music" autoplay loop preload="auto">
+            <source src="media/music/until-i-found-you.mp3" type="audio/mpeg" />
           </audio>
         </div>
 
@@ -241,5 +265,16 @@
     </div>
 
     <div id="confetti-layer" class="confetti-layer" aria-hidden="true"></div>
+
+    <div class="site-music-player" role="group" aria-label="Background music player">
+      <div class="site-music-info">
+        <span class="site-music-eyebrow">BACKGROUND MUSIC</span>
+        <span class="site-music-title">Until I Found You</span>
+      </div>
+      <button class="site-music-button site-mute-button" id="site-music-mute" type="button" aria-label="Mute music" title="Mute music" aria-pressed="false">
+        <span aria-hidden="true">🔊</span>
+      </button>
+      <span class="site-music-status" id="site-music-status" aria-live="polite"></span>
+    </div>
   </body>
 </html>

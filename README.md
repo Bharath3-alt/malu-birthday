@@ -20,7 +20,8 @@ malu-birthday-website/
 │   ├── now/
 │   ├── us/
 │   ├── characters/
-│   └── music/
+│   ├── music/
+│   └── videos/
 └── README.md
 ```
 
@@ -51,7 +52,10 @@ Place a valid video file in `media/childhood/`.
 
 - For example: `childhood-video.mp4`
 - Update the `source` path and the `poster` image on `childhood.html`.
-- The existing video is a placeholder file so you can swap it later without changing the page structure.
+- The childhood video is already included at `media/childhood/IMG_3162.mp4`.
+
+### Storage video on the homepage
+The homepage storage section uses `media/videos/WhatsApp Video 2026-11-24 at 9.21.32 PM.mp4` and includes playback controls.
 
 ## How to edit the messages
 
@@ -76,13 +80,9 @@ Update the text inside the letter card in `birthday.html`.
 </article>
 ```
 
-## Add background music
+## Sitewide background music
 
-Place your audio file in `media/music/`.
-
-- Example: `birthday-soft.wav` or `birthday-soft.mp3`
-- Update the `audio` source in `birthday.html`.
-- You can also replace the button text if you want a custom label.
+Place the MP3 at `media/music/until-i-found-you.mp3`. The floating player attempts to start it on every page and remembers mute and position preferences while navigating in the same tab. Some browsers block sound autoplay until the visitor interacts with the page or allows autoplay for the site.
 
 ## Local preview instructions
 

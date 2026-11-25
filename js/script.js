@@ -4,8 +4,9 @@
   const nav = document.querySelector(".nav");
   const navToggle = document.querySelector(".nav-toggle");
   const giftBox = document.getElementById("gift-box");
-  const musicToggle = document.getElementById("music-toggle");
-  const birthdayMusic = document.getElementById("birthday-music");
+  const siteMusic = document.getElementById("site-background-music");
+  const siteMusicMuteToggle = document.getElementById("site-music-mute");
+  const siteMusicStatus = document.getElementById("site-music-status");
   const revealLetterButton = document.getElementById("reveal-letter");
   const birthdayLetter = document.getElementById("birthday-letter");
   const confettiLayer = document.getElementById("confetti-layer");
@@ -123,24 +124,131 @@
     });
   }
 
-  if (musicToggle && birthdayMusic) {
-    const syncLabel = (playing) => {
-      musicToggle.textContent = playing ? "Pause music" : "Play music";
+  if (siteMusic) {
+    const preferenceKeys = {
+      muted: "malu-site-music-muted",
+      position: "malu-site-music-position",
     };
 
-    musicToggle.addEventListener("click", async () => {
-      if (birthdayMusic.paused) {
-        try {
-          await birthdayMusic.play();
-          syncLabel(true);
-        } catch (error) {
-          console.warn("Audio autoplay was blocked until interaction occurred.", error);
-        }
-      } else {
-        birthdayMusic.pause();
-        syncLabel(false);
+    const readLocalPreference = (key) => {
+      try {
+        return window.localStorage.getItem(key);
+      } catch (error) {
+        console.warn("Could not read the music preference from local storage.", error);
+        return null;
       }
+    };
+
+    const writeLocalPreference = (key, value) => {
+      try {
+        window.localStorage.setItem(key, value);
+      } catch (error) {
+        console.warn("Could not save the music preference to local storage.", error);
+      }
+    };
+
+    const syncMuteControl = () => {
+      const muted = siteMusic.muted;
+      if (siteMusicMuteToggle) {
+        siteMusicMuteToggle.setAttribute("aria-label", muted ? "Unmute music" : "Mute music");
+        siteMusicMuteToggle.setAttribute("title", muted ? "Unmute music" : "Mute music");
+        siteMusicMuteToggle.setAttribute("aria-pressed", String(muted));
+        const icon = siteMusicMuteToggle.querySelector("span");
+        if (icon) {
+          icon.textContent = muted ? "🔇" : "🔊";
+        }
+      }
+    };
+
+    const showAutoplayError = (error) => {
+      if (siteMusicStatus) {
+        siteMusicStatus.textContent = "Your browser blocked automatic playback. Allow sound for this site and reload.";
+        siteMusicStatus.classList.add("is-visible");
+      }
+      console.warn("The browser did not allow automatic background music playback.", error);
+    };
+
+    const startPlayback = async () => {
+      try {
+        await siteMusic.play();
+        if (siteMusicStatus) {
+          siteMusicStatus.textContent = "";
+          siteMusicStatus.classList.remove("is-visible");
+        }
+      } catch (error) {
+        showAutoplayError(error);
+      }
+    };
+
+    const setSavedPosition = () => {
+      const savedPosition = Number(readLocalPreference(preferenceKeys.position));
+      if (Number.isFinite(savedPosition) && savedPosition > 0 && Number.isFinite(siteMusic.duration)) {
+        siteMusic.currentTime = Math.min(savedPosition, Math.max(0, siteMusic.duration - 0.1));
+      }
+    };
+
+    let lastPositionSave = 0;
+    const savePosition = (force) => {
+      const now = Date.now();
+      if (!force && now - lastPositionSave < 1000) {
+        return;
+      }
+      lastPositionSave = now;
+      if (Number.isFinite(siteMusic.currentTime)) {
+        writeLocalPreference(preferenceKeys.position, String(siteMusic.currentTime));
+      }
+    };
+
+    siteMusic.muted = readLocalPreference(preferenceKeys.muted) === "true";
+    siteMusic.addEventListener("play", syncMuteControl);
+    siteMusic.addEventListener("volumechange", syncMuteControl);
+    siteMusic.addEventListener("timeupdate", () => savePosition(false));
+    siteMusic.addEventListener("error", () => {
+      const mediaError = siteMusic.error;
+      const errorMessage = mediaError ? `Media error ${mediaError.code}.` : "Unknown media error.";
+      if (siteMusicStatus) {
+        siteMusicStatus.textContent = "Music file could not be loaded. Check media/music/until-i-found-you.mp3.";
+        siteMusicStatus.classList.add("is-visible");
+      }
+      console.error(`The background music file could not be loaded. ${errorMessage}`, mediaError);
     });
+    window.addEventListener("pagehide", () => savePosition(true));
+
+    const retryAutoplay = () => {
+      if (siteMusic.paused) {
+        startPlayback();
+      }
+    };
+    document.addEventListener("pointerdown", retryAutoplay, { passive: true });
+    document.addEventListener("keydown", retryAutoplay);
+    siteMusic.addEventListener(
+      "play",
+      () => {
+        document.removeEventListener("pointerdown", retryAutoplay);
+        document.removeEventListener("keydown", retryAutoplay);
+      },
+      { once: true }
+    );
+
+    if (siteMusicMuteToggle) {
+      siteMusicMuteToggle.addEventListener("click", () => {
+        siteMusic.muted = !siteMusic.muted;
+        writeLocalPreference(preferenceKeys.muted, String(siteMusic.muted));
+        syncMuteControl();
+      });
+    }
+
+    const restoreAndPlay = () => {
+      setSavedPosition();
+      startPlayback();
+    };
+
+    if (siteMusic.readyState >= 1) {
+      restoreAndPlay();
+    } else {
+      siteMusic.addEventListener("loadedmetadata", restoreAndPlay, { once: true });
+    }
+    syncMuteControl();
   }
 
   if (lightbox && lightboxImage && lightboxCaption) {

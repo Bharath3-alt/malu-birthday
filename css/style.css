@@ -1168,6 +1168,116 @@ button {
   background: #080408;
 }
 
+.storage-video-section {
+  padding-top: clamp(4.5rem, 9vw, 8rem);
+}
+
+.storage-video-heading {
+  max-width: 820px;
+  margin: 0 auto 2.25rem;
+  text-align: center;
+}
+
+.storage-video-heading .eyebrow {
+  margin-bottom: 0.9rem;
+}
+
+.storage-video-heading h2 {
+  margin: 0;
+  color: var(--rose-ice);
+  font-size: clamp(2.2rem, 5vw, 4.2rem);
+  letter-spacing: -0.035em;
+  line-height: 1.05;
+  text-wrap: balance;
+  text-shadow: 0 12px 36px rgba(170, 15, 58, 0.3);
+}
+
+.storage-video-heading > p:last-child {
+  max-width: 660px;
+  margin: 1rem auto 0;
+  color: var(--text-soft);
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(1rem, 2vw, 1.2rem);
+  line-height: 1.75;
+  text-wrap: pretty;
+}
+
+.storage-video-frame {
+  width: fit-content;
+  max-width: 100%;
+  margin: 0 auto;
+  padding: clamp(0.55rem, 1.4vw, 0.9rem);
+  overflow: hidden;
+  border: 1px solid rgba(255, 215, 226, 0.62);
+  border-radius: clamp(22px, 3vw, 34px);
+  background: linear-gradient(145deg, rgba(248, 240, 234, 0.2), rgba(106, 13, 38, 0.76) 38%, rgba(39, 10, 24, 0.94));
+  box-shadow: 0 28px 64px rgba(0, 0, 0, 0.36), inset 0 1px 0 rgba(255, 250, 247, 0.24);
+}
+
+.storage-video-player {
+  width: auto;
+  height: min(78vh, 760px);
+  max-width: 100%;
+  aspect-ratio: auto 384 / 848;
+  border: 1px solid rgba(255, 240, 245, 0.18);
+  border-radius: clamp(15px, 2vw, 24px);
+  background: #180710;
+  object-fit: contain;
+}
+
+.storage-status {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  width: fit-content;
+  max-width: 100%;
+  margin: 0.9rem 0.2rem 0.15rem auto;
+  padding: 0.55rem 0.8rem;
+  border: 1px solid rgba(255, 222, 232, 0.2);
+  border-radius: 999px;
+  background: rgba(25, 7, 17, 0.62);
+  color: var(--cream);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.18);
+}
+
+.storage-status-icon {
+  font-size: 1.1rem;
+  line-height: 1;
+}
+
+.storage-status-label {
+  color: var(--rose-soft);
+  font-size: 0.66rem;
+  font-weight: 800;
+  letter-spacing: 0.09em;
+  white-space: nowrap;
+}
+
+.storage-meter {
+  width: clamp(54px, 10vw, 90px);
+  height: 8px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 240, 245, 0.28);
+  border-radius: 999px;
+  background: rgba(255, 250, 247, 0.16);
+}
+
+.storage-meter-fill {
+  display: block;
+  width: 96%;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #f8b8cb, #ed578c);
+  box-shadow: 0 0 10px rgba(237, 87, 140, 0.52);
+}
+
+.storage-status-value {
+  color: var(--cream);
+  font-size: 0.72rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
 .cinematic-link {
   position: relative;
   overflow: hidden;
@@ -1252,6 +1362,119 @@ body.transitioning::before {
 .reveal.visible {
   opacity: 1;
   transform: translateY(0);
+}
+
+.site-music-player {
+  position: fixed;
+  right: max(1rem, env(safe-area-inset-right, 0px));
+  bottom: max(1rem, env(safe-area-inset-bottom, 0px));
+  z-index: 75;
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  max-width: calc(100vw - 2rem);
+  padding: 0.5rem 0.65rem;
+  border: 1px solid rgba(255, 222, 232, 0.56);
+  border-radius: 999px;
+  background: linear-gradient(140deg, rgba(106, 13, 38, 0.97), rgba(31, 8, 19, 0.97));
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.38), inset 0 1px 0 rgba(255, 250, 247, 0.15);
+  color: var(--cream);
+  backdrop-filter: blur(14px);
+}
+
+.site-music-player audio {
+  display: none;
+}
+
+.site-music-button {
+  display: grid;
+  width: 38px;
+  height: 38px;
+  flex: 0 0 auto;
+  place-items: center;
+  padding: 0;
+  border: 1px solid rgba(255, 240, 245, 0.32);
+  border-radius: 50%;
+  background: rgba(255, 250, 247, 0.12);
+  color: var(--cream);
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.site-music-button:first-of-type {
+  border-color: rgba(255, 250, 247, 0.8);
+  background: var(--cream);
+  color: var(--burgundy-strong);
+}
+
+.site-music-button:hover {
+  transform: scale(1.06);
+  background: var(--rose-soft);
+  color: var(--burgundy-strong);
+}
+
+.site-music-button:focus-visible {
+  outline: 2px solid var(--cream);
+  outline-offset: 3px;
+}
+
+.site-music-button span {
+  font-size: 0.88rem;
+  line-height: 1;
+}
+
+.site-music-info {
+  display: grid;
+  gap: 0.12rem;
+  min-width: 0;
+  padding-inline: 0.1rem;
+}
+
+.site-music-eyebrow {
+  color: var(--rose-soft);
+  font-size: 0.52rem;
+  font-weight: 800;
+  letter-spacing: 0.13em;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+.site-music-title {
+  color: var(--cream);
+  font-size: 0.78rem;
+  font-weight: 700;
+  line-height: 1.25;
+  white-space: nowrap;
+}
+
+.site-music-status {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  clip-path: inset(50%);
+}
+
+.site-music-status.is-visible {
+  right: 0;
+  bottom: calc(100% + 0.55rem);
+  width: max-content;
+  max-width: min(300px, calc(100vw - 2rem));
+  height: auto;
+  overflow: visible;
+  padding: 0.6rem 0.8rem;
+  border: 1px solid rgba(255, 222, 232, 0.45);
+  border-radius: 14px;
+  background: rgba(31, 8, 19, 0.97);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.32);
+  color: var(--cream);
+  font-size: 0.72rem;
+  line-height: 1.45;
+  white-space: normal;
+  clip: auto;
+  clip-path: none;
 }
 
 .stitch-background {
@@ -1420,6 +1643,22 @@ body.transitioning::before {
 }
 
 @media (max-width: 680px) {
+  .site-music-player {
+    right: max(0.75rem, env(safe-area-inset-right, 0px));
+    bottom: max(0.75rem, env(safe-area-inset-bottom, 0px));
+    gap: 0.45rem;
+    padding: 0.42rem 0.5rem;
+  }
+
+  .site-music-button {
+    width: 35px;
+    height: 35px;
+  }
+
+  .site-music-title {
+    font-size: 0.72rem;
+  }
+
   .page-childhood .page-main {
     width: min(100% - 1.25rem, 460px);
     padding-top: 6.5rem;
@@ -1514,6 +1753,17 @@ body.transitioning::before {
   .us-video-grid {
     grid-template-columns: 1fr;
     max-width: 400px;
+  }
+
+  .storage-status {
+    gap: 0.5rem;
+    margin-inline: auto 0.1rem;
+    padding: 0.5rem 0.65rem;
+  }
+
+  .storage-status-label {
+    font-size: 0.58rem;
+    letter-spacing: 0.06em;
   }
 
   .media-card img,
