@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>A Little Birthday Surprise 🎂</title>
     <meta name="description" content="A heartfelt birthday surprise for Malu with roses, music, and a love letter." />
-    <link rel="stylesheet" href="css/style.css?v=20261124-autoplay-music" />
-    <script src="js/script.js?v=20261124-autoplay-music" defer></script>
+    <link rel="stylesheet" href="css/style.css?v=20261124-music-controls" />
+    <script src="js/script.js?v=20261124-music-controls" defer></script>
   </head>
   <body class="page-birthday">
     <div class="stitch-background" aria-hidden="true">
@@ -54,7 +54,7 @@
             </button>
           </div>
 
-          <audio id="site-background-music" autoplay preload="auto" loop aria-label="Until I Found You background music">
+          <audio id="site-background-music" preload="auto" loop aria-label="Until I Found You background music">
             <source src="media/music/until-i-found-you.mp3" type="audio/mpeg" />
           </audio>
         </div>
@@ -93,6 +93,9 @@
         <span class="site-music-eyebrow">BACKGROUND MUSIC</span>
         <span class="site-music-title">Until I Found You</span>
       </div>
+      <button class="site-music-button site-play-button" id="site-music-play" type="button" aria-label="Play music" title="Play music" aria-pressed="false">
+        <span aria-hidden="true">▶</span>
+      </button>
       <button class="site-music-button site-mute-button" id="site-music-mute" type="button" aria-label="Mute music" title="Mute music" aria-pressed="false">
         <span aria-hidden="true">🔊</span>
       </button>

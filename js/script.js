@@ -5,6 +5,7 @@
   const navToggle = document.querySelector(".nav-toggle");
   const giftBox = document.getElementById("gift-box");
   const siteMusic = document.getElementById("site-background-music");
+  const siteMusicPlayToggle = document.getElementById("site-music-play");
   const siteMusicMuteToggle = document.getElementById("site-music-mute");
   const siteMusicStatus = document.getElementById("site-music-status");
   const revealLetterButton = document.getElementById("reveal-letter");
@@ -126,6 +127,7 @@
 
   if (siteMusic) {
     const preferenceKeys = {
+      playing: "malu-site-music-playing",
       muted: "malu-site-music-muted",
       position: "malu-site-music-position",
     };
@@ -160,24 +162,47 @@
       }
     };
 
-    const showAutoplayError = (error) => {
+    const syncPlayControl = () => {
+      const isPlaying = !siteMusic.paused;
+      if (siteMusicPlayToggle) {
+        siteMusicPlayToggle.setAttribute("aria-label", isPlaying ? "Pause music" : "Play music");
+        siteMusicPlayToggle.setAttribute("title", isPlaying ? "Pause music" : "Play music");
+        siteMusicPlayToggle.setAttribute("aria-pressed", String(isPlaying));
+        const icon = siteMusicPlayToggle.querySelector("span");
+        if (icon) {
+          icon.textContent = isPlaying ? "❚❚" : "▶";
+        }
+      }
+    };
+
+    const showPlaybackError = (error) => {
       if (siteMusicStatus) {
-        siteMusicStatus.textContent = "Your browser blocked automatic playback. Allow sound for this site and reload.";
+        siteMusicStatus.textContent = "Playback could not start. Tap Play to try again.";
         siteMusicStatus.classList.add("is-visible");
       }
-      console.warn("The browser did not allow automatic background music playback.", error);
+      console.warn("The browser did not allow background music playback.", error);
     };
 
     const startPlayback = async () => {
       try {
         await siteMusic.play();
+        writeLocalPreference(preferenceKeys.playing, "true");
         if (siteMusicStatus) {
           siteMusicStatus.textContent = "";
           siteMusicStatus.classList.remove("is-visible");
         }
+        syncPlayControl();
       } catch (error) {
-        showAutoplayError(error);
+        writeLocalPreference(preferenceKeys.playing, "false");
+        syncPlayControl();
+        showPlaybackError(error);
       }
+    };
+
+    const pausePlayback = () => {
+      siteMusic.pause();
+      writeLocalPreference(preferenceKeys.playing, "false");
+      syncPlayControl();
     };
 
     const setSavedPosition = () => {
@@ -200,7 +225,11 @@
     };
 
     siteMusic.muted = readLocalPreference(preferenceKeys.muted) === "true";
-    siteMusic.addEventListener("play", syncMuteControl);
+    siteMusic.addEventListener("play", () => {
+      syncMuteControl();
+      syncPlayControl();
+    });
+    siteMusic.addEventListener("pause", syncPlayControl);
     siteMusic.addEventListener("volumechange", syncMuteControl);
     siteMusic.addEventListener("timeupdate", () => savePosition(false));
     siteMusic.addEventListener("error", () => {
@@ -214,21 +243,15 @@
     });
     window.addEventListener("pagehide", () => savePosition(true));
 
-    const retryAutoplay = () => {
-      if (siteMusic.paused) {
-        startPlayback();
-      }
-    };
-    document.addEventListener("pointerdown", retryAutoplay, { passive: true });
-    document.addEventListener("keydown", retryAutoplay);
-    siteMusic.addEventListener(
-      "play",
-      () => {
-        document.removeEventListener("pointerdown", retryAutoplay);
-        document.removeEventListener("keydown", retryAutoplay);
-      },
-      { once: true }
-    );
+    if (siteMusicPlayToggle) {
+      siteMusicPlayToggle.addEventListener("click", () => {
+        if (siteMusic.paused) {
+          startPlayback();
+        } else {
+          pausePlayback();
+        }
+      });
+    }
 
     if (siteMusicMuteToggle) {
       siteMusicMuteToggle.addEventListener("click", () => {
@@ -240,7 +263,11 @@
 
     const restoreAndPlay = () => {
       setSavedPosition();
-      startPlayback();
+      syncPlayControl();
+      syncMuteControl();
+      if (readLocalPreference(preferenceKeys.playing) === "true") {
+        startPlayback();
+      }
     };
 
     if (siteMusic.readyState >= 1) {
@@ -249,6 +276,7 @@
       siteMusic.addEventListener("loadedmetadata", restoreAndPlay, { once: true });
     }
     syncMuteControl();
+    syncPlayControl();
   }
 
   if (lightbox && lightboxImage && lightboxCaption) {

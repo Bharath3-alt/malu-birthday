@@ -8,8 +8,8 @@
       name="description"
       content="A cinematic, romantic birthday experience for Malu with a premium editorial design, storybook moments, and a heartfelt birthday finale."
     />
-    <link rel="stylesheet" href="css/style.css?v=20261124-autoplay-music" />
-    <script src="js/script.js?v=20261124-autoplay-music" defer></script>
+    <link rel="stylesheet" href="css/style.css?v=20261124-music-controls" />
+    <script src="js/script.js?v=20261124-music-controls" defer></script>
   </head>
   <body>
     <div id="loader" class="loader" aria-live="polite">
@@ -231,7 +231,7 @@
             <span class="gift-ribbon gift-ribbon-right"></span>
           </button>
 
-          <audio id="site-background-music" autoplay loop preload="auto">
+          <audio id="site-background-music" loop preload="auto">
             <source src="media/music/until-i-found-you.mp3" type="audio/mpeg" />
           </audio>
         </div>
@@ -271,6 +271,9 @@
         <span class="site-music-eyebrow">BACKGROUND MUSIC</span>
         <span class="site-music-title">Until I Found You</span>
       </div>
+      <button class="site-music-button site-play-button" id="site-music-play" type="button" aria-label="Play music" title="Play music" aria-pressed="false">
+        <span aria-hidden="true">▶</span>
+      </button>
       <button class="site-music-button site-mute-button" id="site-music-mute" type="button" aria-label="Mute music" title="Mute music" aria-pressed="false">
         <span aria-hidden="true">🔊</span>
       </button>
